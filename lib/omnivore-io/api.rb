@@ -10,6 +10,8 @@ require "omnivore-io/api/errors"
 require "omnivore-io/api/version"
 
 require "omnivore-io/api/location"
+require "omnivore-io/api/order_type"
+require "omnivore-io/api/ticket"
 
 module OmnivoreIO
   class API
