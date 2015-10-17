@@ -29,21 +29,35 @@ module OmnivoreIO
     end
     
     module InstanceMethods
+      
       def as_json(options={})
         json = {}
         self.class._json_attributes.each do |attr|
-          json[attr] = self.send attr
+          val = self.send attr
+          json[attr] = val
         end
         json
       end
+      
+      def merge!(object)
+        self.class._json_attributes.each do |attr|
+          if object.respond_to?(attr)
+            if val = object.send(attr)
+              self.send "#{attr}=".to_sym, val
+            end
+          end
+        end
+      end
+      
     end
-    
+
   end
   
   class API
 
     HEADERS = {
       :content_type => :json,
+      :accept => :json,
       :'Api-Key' => 'API_KEY_HERE'
     }
 
@@ -73,7 +87,9 @@ module OmnivoreIO
         end
         RestClient.get url, headers
       when :post
-        throw 'TODO'
+        url = "#{OPTIONS[:host]}#{OPTIONS[:api_version]}#{endpoint}"
+        payload = query.as_json.to_json
+        RestClient::Request.execute(method: :post, url: url, payload: payload, headers: headers)
       end
       # TODO: handle errors
       JSON.parse(response.to_str)
