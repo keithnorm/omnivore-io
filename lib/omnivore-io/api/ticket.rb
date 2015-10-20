@@ -2,12 +2,13 @@ module OmnivoreIO
   class Ticket
     include OmnivoreObject
     
-    attr_accessor :client
+    attr_accessor :client, :items
     json_attr_accessor :id, :location_id, :auto_send, :closed_at,
       :guest_count, :name, :open, :opened_at, :ticket_number, :totals, :employee, :order_type, :revenue_center
     
     def initialize(client, attributes={})
       self.client = client
+      self.items = []
       attributes.each do |key, value|
         if self.respond_to? "#{key}=".to_sym
           self.send "#{key}=".to_sym, value
@@ -46,6 +47,16 @@ module OmnivoreIO
     def open_ticket(location_id, ticket_json)
       response = request(:post, "/locations/#{location_id}/tickets", ticket_json)
       OmnivoreIO::Ticket.new self, response.merge(location_id: location_id)
+    end
+    
+    def add_menu_item_to_ticket(location_id, ticket_id, payload_json)
+      response = request(:post, "/locations/#{location_id}/tickets/#{ticket_id}/items", payload_json)
+      OmnivoreIO::Ticket.new self, response.merge(location_id: location_id)
+    end
+    
+    def add_payment_to_ticket(location_id, ticket_id, payload_json)
+      response = request(:post, "/locations/#{location_id}/tickets/#{ticket_id}/payments", payload_json)
+      response
     end
 
   end
