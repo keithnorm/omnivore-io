@@ -49,6 +49,11 @@ module OmnivoreIO
       OmnivoreIO::Ticket.new self, response.merge(location_id: location_id)
     end
     
+    def void_ticket(location_id, ticket_id)
+      response = request(:post, "/locations/#{location_id}/tickets/#{ticket_id}", {"void": true})
+      OmnivoreIO::Ticket.new self, response.merge(location_id: location_id)
+    end
+    
     def add_menu_item_to_ticket(location_id, ticket_id, payload_json)
       response = request(:post, "/locations/#{location_id}/tickets/#{ticket_id}/items", payload_json)
       OmnivoreIO::Ticket.new self, response.merge(location_id: location_id)
