@@ -31,6 +31,7 @@ module OmnivoreIO
       (attributes['_embedded']['items'] || []).each do |item_json|
         self.items << OmnivoreIO::TicketItem.new(item_json)
       end
+      self.order_type = OmnivoreIO::OrderType.new(nil, attributes['_embedded']['order_type'])
     end
     
     def open!
