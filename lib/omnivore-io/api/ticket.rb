@@ -34,10 +34,12 @@ module OmnivoreIO
           self.send "#{key}=".to_sym, value
         end
       end
-      (attributes['_embedded']['items'] || []).each do |item_json|
-        self.items << OmnivoreIO::TicketItem.new(item_json)
+      if embedded = attributes['_embedded']
+        (embedded['items'] || []).each do |item_json|
+          self.items << OmnivoreIO::TicketItem.new(item_json)
+        end
+        self.order_type = OmnivoreIO::OrderType.new(nil, embedded['order_type'])
       end
-      self.order_type = OmnivoreIO::OrderType.new(nil, attributes['_embedded']['order_type'])
     end
     
     def open!
