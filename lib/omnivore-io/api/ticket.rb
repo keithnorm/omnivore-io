@@ -11,6 +11,12 @@ module OmnivoreIO
       self.modifiers = (attributes['modifiers'] || []).map{|modifier_json| OmnivoreIO::Modifier.new(nil, modifier_json) }
     end
     
+    def as_json(options={})
+      json = super
+      json[:menu_item] = self.menu_item.as_json
+      json
+    end
+    
   end
   
   class Ticket
@@ -44,6 +50,13 @@ module OmnivoreIO
         "auto_send" => self.auto_send
       }
       self.merge! self.client.open_ticket(self.location_id, payload)
+    end
+    
+    def as_json(options={})
+      json = super
+      json[:items] = self.items.map{ |item| item.as_json }
+      json[:order_type] = self.order_type.as_json
+      json
     end
     
   end
