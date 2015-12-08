@@ -1,10 +1,24 @@
 module OmnivoreIO
+  class TicketItem
+    include OmnivoreObject
+    
+    json_attr_accessor :menu_item, :quantity, :modifiers, :sent
+    
+    def initialize(attributes={})
+      self.quantity = attributes['quantity']
+      self.sent = attributes['sent']
+      self.menu_item = OmnivoreIO::MenuItem.new(nil, attributes['_embedded']['menu_item'])
+      self.modifiers = (attributes['modifiers'] || []).map{|modifier_json| OmnivoreIO::Modifier.new(nil, modifier_json) }
+    end
+    
+  end
+  
   class Ticket
     include OmnivoreObject
     
-    attr_accessor :client, :items
+    attr_accessor :client
     json_attr_accessor :id, :location_id, :auto_send, :closed_at,
-      :guest_count, :name, :open, :opened_at, :ticket_number, :totals, :employee, :order_type, :revenue_center
+      :guest_count, :name, :open, :opened_at, :void, :ticket_number, :totals, :employee, :order_type, :revenue_center, :items
     
     def initialize(client, attributes={})
       self.client = client
@@ -13,6 +27,9 @@ module OmnivoreIO
         if self.respond_to? "#{key}=".to_sym
           self.send "#{key}=".to_sym, value
         end
+      end
+      (attributes['_embedded']['items'] || []).each do |item_json|
+        self.items << OmnivoreIO::TicketItem.new(item_json)
       end
     end
     
