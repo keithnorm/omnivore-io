@@ -1,4 +1,4 @@
-require 'rest_client'
+require 'rest-client'
 require 'json'
 
 __LIB_DIR__ = File.expand_path(File.join(File.dirname(__FILE__), ".."))
@@ -11,15 +11,15 @@ require "omnivore-io/api/version"
 
 module OmnivoreIO
   module OmnivoreObject
-    
+
     def self.included base
       base.send :include, InstanceMethods
       base.extend ClassMethods
     end
-    
+
     module ClassMethods
-      attr_accessor :_json_attributes 
-      
+      attr_accessor :_json_attributes
+
       def json_attr_accessor(*attributes)
         self._json_attributes = attributes
         attributes.each do |attribute|
@@ -27,9 +27,9 @@ module OmnivoreIO
         end
       end
     end
-    
+
     module InstanceMethods
-      
+
       def as_json(options={})
         json = {}
         self.class._json_attributes.each do |attr|
@@ -38,7 +38,7 @@ module OmnivoreIO
         end
         json
       end
-      
+
       def merge!(object)
         self.class._json_attributes.each do |attr|
           if object.respond_to?(attr)
@@ -48,11 +48,11 @@ module OmnivoreIO
           end
         end
       end
-      
+
     end
 
   end
-  
+
   class API
 
     HEADERS = {
