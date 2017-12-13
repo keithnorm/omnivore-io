@@ -63,7 +63,7 @@ module OmnivoreIO
 
     OPTIONS = {
       :host => 'https://api.omnivore.io/',
-      :api_version => '0.1'
+      :api_version => '1.0'
     }
 
     def initialize(options={})
